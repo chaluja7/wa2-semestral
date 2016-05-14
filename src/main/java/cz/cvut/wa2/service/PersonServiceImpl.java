@@ -1,7 +1,7 @@
-package cz.cvut.basic.service;
+package cz.cvut.wa2.service;
 
-import cz.cvut.basic.dao.HibernatePersonDao;
-import cz.cvut.basic.entity.Person;
+import cz.cvut.wa2.dao.HibernatePersonDao;
+import cz.cvut.wa2.entity.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;

@@ -1,4 +1,4 @@
-package cz.cvut.basic.entity;
+package cz.cvut.wa2.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -24,7 +24,6 @@ public class Role implements Serializable {
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "roles")
     private Set<Person> persons;
-
 
     @Id
     @Column

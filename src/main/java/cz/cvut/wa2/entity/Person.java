@@ -1,4 +1,4 @@
-package cz.cvut.basic.entity;
+package cz.cvut.wa2.entity;
 
 import org.hibernate.validator.constraints.Email;
 

@@ -1,4 +1,4 @@
-package cz.cvut.basic.service;
+package cz.cvut.wa2.service;
 
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.Rollback;

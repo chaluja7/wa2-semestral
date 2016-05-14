@@ -1,9 +1,9 @@
-package cz.cvut.basic.web.interceptor;
+package cz.cvut.wa2.web.interceptor;
 
-import cz.cvut.basic.entity.Person;
-import cz.cvut.basic.entity.Role;
-import cz.cvut.basic.service.PersonService;
-import cz.cvut.basic.web.controller.exception.UnauthorizedException;
+import cz.cvut.wa2.entity.Person;
+import cz.cvut.wa2.entity.Role;
+import cz.cvut.wa2.service.PersonService;
+import cz.cvut.wa2.web.controller.exception.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;

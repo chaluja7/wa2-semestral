@@ -1,4 +1,4 @@
-package cz.cvut.basic.web.controller.exception;
+package cz.cvut.wa2.web.controller.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

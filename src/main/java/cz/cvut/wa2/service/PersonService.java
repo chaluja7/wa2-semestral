@@ -1,7 +1,7 @@
-package cz.cvut.basic.service;
+package cz.cvut.wa2.service;
 
 
-import cz.cvut.basic.entity.Person;
+import cz.cvut.wa2.entity.Person;
 
 import java.util.List;
 

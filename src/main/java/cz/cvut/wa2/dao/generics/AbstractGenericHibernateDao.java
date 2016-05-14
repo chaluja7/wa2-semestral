@@ -1,7 +1,7 @@
-package cz.cvut.basic.dao.generics;
+package cz.cvut.wa2.dao.generics;
 
 
-import cz.cvut.basic.entity.AbstractEntity;
+import cz.cvut.wa2.entity.AbstractEntity;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 

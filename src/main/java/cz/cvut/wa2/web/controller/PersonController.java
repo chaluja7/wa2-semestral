@@ -1,25 +1,30 @@
-package cz.cvut.basic.web.controller;
+package cz.cvut.wa2.web.controller;
 
-import cz.cvut.basic.entity.Person;
-import cz.cvut.basic.entity.Role;
-import cz.cvut.basic.service.PersonService;
-import cz.cvut.basic.web.controller.exception.BadRequestException;
-import cz.cvut.basic.web.controller.exception.ResourceNotFoundException;
-import cz.cvut.basic.web.interceptor.CheckAccess;
-import cz.cvut.basic.web.wrapper.PersonWrapper;
+import cz.cvut.wa2.entity.Person;
+import cz.cvut.wa2.entity.Role;
+import cz.cvut.wa2.service.PersonService;
+import cz.cvut.wa2.web.controller.exception.BadRequestException;
+import cz.cvut.wa2.web.controller.exception.ResourceNotFoundException;
+import cz.cvut.wa2.web.interceptor.CheckAccess;
+import cz.cvut.wa2.web.wrapper.PersonWrapper;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
+ * Persons controller - accessed by admin only.
+ *
  * @author jakubchalupa
  * @since 20.03.16
  */
 @RestController
+@CheckAccess(Role.Type.ADMIN)
 public class PersonController extends AbstractController {
 
     @Autowired
@@ -45,7 +50,6 @@ public class PersonController extends AbstractController {
         return personWrapper;
     }
 
-    @CheckAccess({Role.Type.ADMIN})
     @RequestMapping(value = "/persons/create", method = RequestMethod.POST)
     public ResponseEntity<String> doCreateOrder(@RequestBody PersonWrapper personWrapper) {
         if(personWrapper == null) {
@@ -70,6 +74,12 @@ public class PersonController extends AbstractController {
         wrapper.setName(person.getName());
         wrapper.setSurname(person.getSurname());
 
+        List<Role.Type> roles = new ArrayList<>();
+        for(Role role : person.getRoles()) {
+            roles.add(role.getType());
+        }
+        wrapper.setRoles(roles);
+
         return wrapper;
     }
 
@@ -80,6 +90,14 @@ public class PersonController extends AbstractController {
         person.setEmail(wrapper.getEmail());
         person.setName(wrapper.getName());
         person.setSurname(wrapper.getSurname());
+
+        if(wrapper.getRoles() != null) {
+            Set<Role> roles = new HashSet<>();
+            for (Role.Type type : wrapper.getRoles()) {
+                roles.add(new Role(type));
+            }
+            person.setRoles(roles);
+        }
 
         return person;
     }

@@ -1,7 +1,7 @@
-package cz.cvut.basic.dao;
+package cz.cvut.wa2.dao;
 
-import cz.cvut.basic.dao.generics.AbstractGenericHibernateDao;
-import cz.cvut.basic.entity.Person;
+import cz.cvut.wa2.dao.generics.AbstractGenericHibernateDao;
+import cz.cvut.wa2.entity.Person;
 import org.springframework.stereotype.Repository;
 
 /**

@@ -7,13 +7,13 @@
                     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
                     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
-    <context:component-scan base-package="cz.cvut.basic.web.controller" />
-    <context:component-scan base-package="cz.cvut.basic.web.interceptor" />
+    <context:component-scan base-package="cz.cvut.wa2.web.controller" />
+    <context:component-scan base-package="cz.cvut.wa2.web.interceptor" />
 
     <mvc:annotation-driven />
 
     <mvc:interceptors>
-        <bean class="cz.cvut.basic.web.interceptor.SecurityInterceptor" />
+        <bean class="cz.cvut.wa2.web.interceptor.SecurityInterceptor" />
     </mvc:interceptors>
 
 </beans>

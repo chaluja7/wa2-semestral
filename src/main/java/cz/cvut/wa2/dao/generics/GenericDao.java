@@ -1,6 +1,6 @@
-package cz.cvut.basic.dao.generics;
+package cz.cvut.wa2.dao.generics;
 
-import cz.cvut.basic.entity.AbstractEntity;
+import cz.cvut.wa2.entity.AbstractEntity;
 
 import java.util.List;
 

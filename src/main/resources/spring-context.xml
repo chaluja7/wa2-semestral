@@ -7,8 +7,8 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-    <context:component-scan base-package="cz.cvut.basic.service"/>
-    <context:component-scan base-package="cz.cvut.basic.dao"/>
+    <context:component-scan base-package="cz.cvut.wa2.service"/>
+    <context:component-scan base-package="cz.cvut.wa2.dao"/>
 
     <tx:annotation-driven transaction-manager="transactionManager" />
 
@@ -16,7 +16,7 @@
 
     <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
-        <property name="packagesToScan" value="cz.cvut.basic.entity"/>
+        <property name="packagesToScan" value="cz.cvut.wa2.entity"/>
         <property name="hibernateProperties">
             <props>
                 <prop key="hibernate.dialect">${hibernate.dialect}</prop>

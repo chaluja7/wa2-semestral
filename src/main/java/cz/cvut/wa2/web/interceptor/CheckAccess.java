@@ -1,6 +1,6 @@
-package cz.cvut.basic.web.interceptor;
+package cz.cvut.wa2.web.interceptor;
 
-import cz.cvut.basic.entity.Role;
+import cz.cvut.wa2.entity.Role;
 
 import java.lang.annotation.*;
 
