@@ -3,7 +3,6 @@ package cz.cvut.wa2.service;
 import cz.cvut.wa2.entity.Incident;
 import cz.cvut.wa2.entity.IncidentState;
 import cz.cvut.wa2.entity.Message;
-import org.hibernate.SessionFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +20,6 @@ public class IncidentServiceTest extends AbstractServiceTest {
 
     @Autowired
     protected IncidentService incidentService;
-
-    @Autowired
-    protected SessionFactory sessionFactory;
 
     private Incident prepareIncident(String text) {
         Incident incident = new Incident();

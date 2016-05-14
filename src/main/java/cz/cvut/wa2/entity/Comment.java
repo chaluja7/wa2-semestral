@@ -15,6 +15,11 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "comment")
+@NamedQueries({
+    @NamedQuery(name = "Comment.findByIdLazyLoaded", query = "select c from Comment c left outer join fetch c.author " +
+        "left outer join fetch c.incident where c.id = :id")
+})
+@SuppressWarnings("JpaQlInspection")
 public class Comment extends AbstractEntity {
 
     @Column(length = 2000)

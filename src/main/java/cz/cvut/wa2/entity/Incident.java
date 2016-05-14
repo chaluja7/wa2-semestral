@@ -9,7 +9,6 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -68,8 +67,8 @@ public class Incident extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private IncidentState state;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "incident")
-    private List<PossibleIncidentRegion> possibleIncidentRegionList;
+//    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "incident")
+//    private List<PossibleIncidentRegion> possibleIncidentRegionList;
 
     public String getTitle() {
         return title;

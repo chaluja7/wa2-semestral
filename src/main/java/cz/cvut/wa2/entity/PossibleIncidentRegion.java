@@ -1,7 +1,6 @@
 package cz.cvut.wa2.entity;
 
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
 
@@ -17,10 +16,21 @@ import javax.persistence.*;
 @SuppressWarnings("JpaQlInspection")
 public class PossibleIncidentRegion extends AbstractEntity {
 
-    @Column(name = "possible_region_name", nullable = false)
-    @NotBlank
-    @Length(min = 2, max = 20)
+    @Column(name = "possible_region_name", nullable = true)
+    @Length(max = 255)
     private String possibleRegionName;
+
+    /**
+     * iff region for given incident id is currently being computed
+     */
+    @Column
+    private boolean computing;
+
+    /**
+     * true if region for this incident is unknown
+     */
+    @Column
+    private boolean unknownRegion;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "incident_id", unique = true)
@@ -32,6 +42,22 @@ public class PossibleIncidentRegion extends AbstractEntity {
 
     public void setPossibleRegionName(String possibleRegionName) {
         this.possibleRegionName = possibleRegionName;
+    }
+
+    public boolean isComputing() {
+        return computing;
+    }
+
+    public void setComputing(boolean computing) {
+        this.computing = computing;
+    }
+
+    public boolean isUnknownRegion() {
+        return unknownRegion;
+    }
+
+    public void setUnknownRegion(boolean unknownRegion) {
+        this.unknownRegion = unknownRegion;
     }
 
     public Incident getIncident() {

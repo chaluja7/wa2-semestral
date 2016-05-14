@@ -1,6 +1,8 @@
 package cz.cvut.wa2.service;
 
+import org.hibernate.SessionFactory;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -17,6 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Rollback
 @Transactional(transactionManager = "transactionManager")
 public abstract class AbstractServiceTest {
+
+    @Autowired
+    protected SessionFactory sessionFactory;
 
 }
 
