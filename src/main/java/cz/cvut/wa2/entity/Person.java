@@ -14,7 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name = "persons")
 @NamedQueries({
-        @NamedQuery(name = "Person.findPersonByToken", query = "FROM Person p WHERE p.token = :token")
+        @NamedQuery(name = "Person.findPersonByToken", query = "from Person p where p.token = :token")
 })
 public class Person extends AbstractEntity {
 

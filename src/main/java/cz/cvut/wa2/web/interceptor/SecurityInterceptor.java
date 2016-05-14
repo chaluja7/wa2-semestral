@@ -56,8 +56,6 @@ public class SecurityInterceptor implements HandlerInterceptor {
                     }
                 }
             }
-
-            throw new UnauthorizedException();
         }
 
         throw new UnauthorizedException();
