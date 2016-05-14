@@ -22,7 +22,7 @@ public class PossibleIncidentRegion extends AbstractEntity {
     @Length(min = 2, max = 20)
     private String possibleRegionName;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "incident_id", unique = true)
     private Incident incident;
 

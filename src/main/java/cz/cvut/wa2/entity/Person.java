@@ -14,8 +14,10 @@ import java.util.Set;
 @Entity
 @Table(name = "persons")
 @NamedQueries({
-        @NamedQuery(name = "Person.findPersonByToken", query = "from Person p where p.token = :token")
+        @NamedQuery(name = "Person.findPersonByToken", query = "select p from Person p left outer join fetch p.roles where p.token = :token"),
+        @NamedQuery(name = "Person.findWithRoles", query = "select p from Person p left outer join fetch p.roles where p.id = :id")
 })
+@SuppressWarnings("JpaQlInspection")
 public class Person extends AbstractEntity {
 
     private static final long serialVersionUID = -6719668226224017418L;
@@ -44,7 +46,7 @@ public class Person extends AbstractEntity {
         this.token = token;
     }
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "person_role", joinColumns = @JoinColumn(name = "person_id", nullable = false, updatable = false),
             inverseJoinColumns = @JoinColumn(name = "role_id", nullable = false, updatable = false))
     private Set<Role> roles;

@@ -8,8 +8,9 @@ import org.joda.time.LocalDateTime;
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Entity representing reported incident in some place.
@@ -22,9 +23,9 @@ import java.util.List;
 @NamedQueries({
     @NamedQuery(name = "Incident.updateState", query = "update Incident set state = :state where id = :id"),
     @NamedQuery(name = "Incident.findAll", query = "select i from Incident i"),
-    @NamedQuery(name = "Incident.findAllInStates", query = "select i from Incident i where state in :states"),
-    @NamedQuery(name = "Incident.findAllFromRegion", query = "select i from Incident i where region_id = :regionId"),
-    @NamedQuery(name = "Incident.findAllFromRegionInStates", query = "select i from Incident i where region_id = :regionId and state in :states")
+    @NamedQuery(name = "Incident.findAllInStates", query = "select i from Incident i where state in (:states)"),
+    @NamedQuery(name = "Incident.findByIdLazyLoaded", query = "select i from Incident i left outer join fetch i.messages m " +
+        "left outer join fetch i.comments c left outer join fetch m.author ma left outer join fetch c.author ca where i.id = :id"),
 })
 @SuppressWarnings("JpaQlInspection")
 public class Incident extends AbstractEntity {
@@ -57,11 +58,11 @@ public class Incident extends AbstractEntity {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "incident")
     @OrderBy("insertedtime DESC")
-    private List<Message> messages;
+    private Set<Message> messages;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "incident")
     @OrderBy("insertedtime DESC")
-    private List<Comment> comments;
+    private Set<Comment> comments;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -118,15 +119,15 @@ public class Incident extends AbstractEntity {
         this.latitude = latitude;
     }
 
-    public List<Message> getMessages() {
+    public Set<Message> getMessages() {
         if(messages == null) {
-            messages = new ArrayList<>();
+            messages = new HashSet<>();
         }
 
         return messages;
     }
 
-    public void setMessages(List<Message> messages) {
+    public void setMessages(Set<Message> messages) {
         this.messages = messages;
     }
 
@@ -138,15 +139,15 @@ public class Incident extends AbstractEntity {
         message.setIncident(this);
     }
 
-    public List<Comment> getComments() {
+    public Set<Comment> getComments() {
         if(comments == null) {
-            comments = new ArrayList<>();
+            comments = new HashSet<>();
         }
 
         return comments;
     }
 
-    public void setComments(List<Comment> comments) {
+    public void setComments(Set<Comment> comments) {
         this.comments = comments;
     }
 

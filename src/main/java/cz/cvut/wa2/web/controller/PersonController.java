@@ -33,7 +33,7 @@ public class PersonController extends AbstractController {
     @RequestMapping(value = "/persons/all", method = RequestMethod.GET)
     public List<PersonWrapper> getPersons() {
         List<PersonWrapper> personWrappers = new ArrayList<>();
-        for (Person person : personService.findAllPersons()) {
+        for (Person person : personService.findAll()) {
             personWrappers.add(getPersonWrapperFromPerson(person));
         }
 
@@ -42,7 +42,7 @@ public class PersonController extends AbstractController {
 
     @RequestMapping(value = "/persons/{personId}", method = RequestMethod.GET)
     public PersonWrapper getPerson(@PathVariable Long personId) {
-        PersonWrapper personWrapper = getPersonWrapperFromPerson(personService.findPerson(personId));
+        PersonWrapper personWrapper = getPersonWrapperFromPerson(personService.findWithRoles(personId));
         if(personWrapper == null) {
             throw new ResourceNotFoundException();
         }
@@ -58,7 +58,7 @@ public class PersonController extends AbstractController {
 
         Person person = getPersonFromPersonWrapper(personWrapper);
         try {
-            personService.persistPerson(person);
+            personService.persist(person);
         } catch (ConstraintViolationException e) {
             throw new BadRequestException();
         }

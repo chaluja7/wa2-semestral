@@ -21,7 +21,7 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public Person findPerson(long id) {
+    public Person find(long id) {
         return hibernatePersonDao.find(id);
     }
 
@@ -33,26 +33,32 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     @Transactional
-    public void persistPerson(Person person) {
+    public void persist(Person person) {
         hibernatePersonDao.persist(person);
     }
 
     @Override
     @Transactional
-    public void mergePerson(Person person) {
+    public void merge(Person person) {
         hibernatePersonDao.merge(person);
     }
 
     @Override
     @Transactional
-    public void deletePerson(long id) {
+    public void delete(long id) {
         hibernatePersonDao.delete(id);
     }
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public List<Person> findAllPersons() {
+    public List<Person> findAll() {
         return hibernatePersonDao.findAll();
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+    public Person findWithRoles(long id) {
+        return hibernatePersonDao.findWithRoles(id);
     }
 
 }

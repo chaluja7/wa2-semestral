@@ -28,9 +28,9 @@ public class PersonServiceTest extends AbstractServiceTest {
         Set<Role> roles = new HashSet<>(Arrays.asList(new Role(Role.Type.ADMIN),new Role(Role.Type.USER)));
 
         Person person = getPerson(email, name, surname, roles, token);
-        personService.persistPerson(person);
+        personService.persist(person);
 
-        Person retrievedPerson = personService.findPerson(person.getId());
+        Person retrievedPerson = personService.findWithRoles(person.getId());
         Assert.assertNotNull(retrievedPerson);
         Assert.assertEquals(email, retrievedPerson.getEmail());
         Assert.assertEquals(name, retrievedPerson.getName());
@@ -44,7 +44,7 @@ public class PersonServiceTest extends AbstractServiceTest {
         retrievedPerson.setName(newName);
         retrievedPerson.getRoles().remove(new Role(Role.Type.ADMIN));
 
-        personService.mergePerson(retrievedPerson);
+        personService.merge(retrievedPerson);
         retrievedPerson = personService.findPersonByToken(token);
         Assert.assertNotNull(retrievedPerson);
         Assert.assertEquals(newName, retrievedPerson.getName());
@@ -53,15 +53,15 @@ public class PersonServiceTest extends AbstractServiceTest {
         Assert.assertFalse(retrievedPerson.getRoles().contains(new Role(Role.Type.ADMIN)));
 
         retrievedPerson.getRoles().add(new Role(Role.Type.ADMIN));
-        personService.mergePerson(retrievedPerson);
+        personService.merge(retrievedPerson);
 
         retrievedPerson = personService.findPersonByToken(token);
         Assert.assertNotNull(retrievedPerson);
         Assert.assertTrue(retrievedPerson.getRoles().contains(new Role(Role.Type.USER)));
         Assert.assertTrue(retrievedPerson.getRoles().contains(new Role(Role.Type.ADMIN)));
 
-        personService.deletePerson(person.getId());
-        Assert.assertNull(personService.findPerson(person.getId()));
+        personService.delete(person.getId());
+        Assert.assertNull(personService.findWithRoles(person.getId()));
     }
 
     public static Person getPerson(String email, String name, String surname, Set<Role> roles, String token) {

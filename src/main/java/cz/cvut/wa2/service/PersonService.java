@@ -11,16 +11,18 @@ import java.util.List;
  */
 public interface PersonService {
 
-    Person findPerson(long id);
+    Person find(long id);
 
     Person findPersonByToken(String token);
 
-    void persistPerson(Person person);
+    void persist(Person person);
 
-    void mergePerson(Person person);
+    void merge(Person person);
 
-    void deletePerson(long id);
+    void delete(long id);
 
-    List<Person> findAllPersons();
+    List<Person> findAll();
+
+    Person findWithRoles(long id);
 
 }
