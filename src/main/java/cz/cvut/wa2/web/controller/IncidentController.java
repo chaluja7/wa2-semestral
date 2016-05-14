@@ -4,6 +4,7 @@ import cz.cvut.wa2.entity.*;
 import cz.cvut.wa2.service.CommentService;
 import cz.cvut.wa2.service.IncidentService;
 import cz.cvut.wa2.service.MessageService;
+import cz.cvut.wa2.service.PossibleIncidentRegionService;
 import cz.cvut.wa2.service.googleMaps.BadGPSException;
 import cz.cvut.wa2.service.googleMaps.GoogleMapsAddressProvider;
 import cz.cvut.wa2.utils.WA2DateTimeUtils;
@@ -15,6 +16,7 @@ import cz.cvut.wa2.web.wrapper.request.NewMessageWrapper;
 import cz.cvut.wa2.web.wrapper.request.UpdateStateWrapper;
 import cz.cvut.wa2.web.wrapper.response.ComplexIncidentWrapper;
 import cz.cvut.wa2.web.wrapper.response.MessageWrapper;
+import cz.cvut.wa2.web.wrapper.response.PossibleRegionWrapper;
 import cz.cvut.wa2.web.wrapper.response.SimpleIncidentWrapper;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +45,9 @@ public class IncidentController extends AbstractController {
 
     @Autowired
     protected CommentService commentService;
+
+    @Autowired
+    protected PossibleIncidentRegionService possibleIncidentRegionService;
 
     @Autowired
     protected GoogleMapsAddressProvider googleMapsAddressProvider;
@@ -186,6 +191,29 @@ public class IncidentController extends AbstractController {
         }
 
         return getResponseCreated("/incidents/" + incidentId + "/comments/" + comment.getId());
+    }
+
+    @RequestMapping(value = "/incidents/{incidentId}/region", method = RequestMethod.GET)
+    public PossibleRegionWrapper getIncidentRegion(@PathVariable Long incidentId) {
+        Incident incident = findIncidentByIdOrThrowResourceNotFound(incidentId);
+
+        PossibleRegionWrapper wrapper = new PossibleRegionWrapper();
+        PossibleIncidentRegion possibleIncidentRegion = possibleIncidentRegionService.findByIncidentId(incidentId);
+        if(possibleIncidentRegion == null) {
+            //TODO musim dat pokyn ke spocitani :)
+            PossibleIncidentRegion newPossibleIncidentRegion = new PossibleIncidentRegion();
+            newPossibleIncidentRegion.setIncident(incident);
+            newPossibleIncidentRegion.setComputing(true);
+            possibleIncidentRegionService.persist(newPossibleIncidentRegion);
+
+            possibleIncidentRegion = possibleIncidentRegionService.findByIncidentId(incidentId);
+        }
+
+        wrapper.setComputing(possibleIncidentRegion.isComputing());
+        wrapper.setUnknownRegion(possibleIncidentRegion.isUnknownRegion());
+        wrapper.setPossibleRegionName(possibleIncidentRegion.getPossibleRegionName());
+
+        return wrapper;
     }
 
     private Incident findIncidentByIdOrThrowResourceNotFound(Long incidentId) {
