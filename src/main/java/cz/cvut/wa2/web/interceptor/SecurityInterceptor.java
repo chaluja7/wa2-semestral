@@ -21,7 +21,7 @@ public class SecurityInterceptor implements HandlerInterceptor {
     @Autowired
     protected PersonService personService;
 
-    private static final String SECURITY_HEADER = "X-Auth";
+    public static final String SECURITY_HEADER = "X-Auth";
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {

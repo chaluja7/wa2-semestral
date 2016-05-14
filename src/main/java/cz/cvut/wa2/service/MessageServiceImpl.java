@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * @author jakubchalupa
  * @since 14.05.16
@@ -47,6 +49,12 @@ public class MessageServiceImpl implements MessageService {
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public Message findByIdLazyLoaded(long id) {
         return hibernateMessageDao.findByIdLazyLoaded(id);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+    public List<Message> findByIncidentId(long incidentId) {
+        return hibernateMessageDao.findByIncidentId(incidentId);
     }
 
 }

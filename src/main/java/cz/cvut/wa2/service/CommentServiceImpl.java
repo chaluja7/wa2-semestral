@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
  * @author jakubchalupa
  * @since 14.05.16
@@ -47,6 +49,12 @@ public class CommentServiceImpl implements CommentService {
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public Comment findByIdLazyLoaded(long id) {
         return hibernateCommentDao.findByIdLazyLoaded(id);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+    public List<Comment> findByIncidentId(long incidentId) {
+        return hibernateCommentDao.findByIncidentId(incidentId);
     }
 
 }

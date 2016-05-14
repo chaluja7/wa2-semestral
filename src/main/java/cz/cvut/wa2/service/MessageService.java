@@ -3,6 +3,8 @@ package cz.cvut.wa2.service;
 
 import cz.cvut.wa2.entity.Message;
 
+import java.util.List;
+
 /**
  * @author jakubchalupa
  * @since 19.03.16
@@ -22,5 +24,11 @@ public interface MessageService {
      * @return message by id with author and incident
      */
     Message findByIdLazyLoaded(long id);
+
+    /**
+     * @param incidentId incident id
+     * @return messages by incident id with authors
+     */
+    List<Message> findByIncidentId(long incidentId);
 
 }

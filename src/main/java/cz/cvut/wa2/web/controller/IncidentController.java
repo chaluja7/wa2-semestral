@@ -1,7 +1,9 @@
 package cz.cvut.wa2.web.controller;
 
 import cz.cvut.wa2.entity.*;
+import cz.cvut.wa2.service.CommentService;
 import cz.cvut.wa2.service.IncidentService;
+import cz.cvut.wa2.service.MessageService;
 import cz.cvut.wa2.service.googleMaps.BadGPSException;
 import cz.cvut.wa2.service.googleMaps.GoogleMapsAddressProvider;
 import cz.cvut.wa2.utils.WA2DateTimeUtils;
@@ -9,6 +11,7 @@ import cz.cvut.wa2.web.controller.exception.BadRequestException;
 import cz.cvut.wa2.web.controller.exception.ResourceNotFoundException;
 import cz.cvut.wa2.web.interceptor.CheckAccess;
 import cz.cvut.wa2.web.wrapper.request.NewIncidentWrapper;
+import cz.cvut.wa2.web.wrapper.request.NewMessageWrapper;
 import cz.cvut.wa2.web.wrapper.request.UpdateStateWrapper;
 import cz.cvut.wa2.web.wrapper.response.ComplexIncidentWrapper;
 import cz.cvut.wa2.web.wrapper.response.MessageWrapper;
@@ -19,11 +22,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Persons controller - accessed by admin only.
+ * Incident controller.
  *
  * @author jakubchalupa
  * @since 14.05.16
@@ -35,23 +39,27 @@ public class IncidentController extends AbstractController {
     protected IncidentService incidentService;
 
     @Autowired
+    protected MessageService messageService;
+
+    @Autowired
+    protected CommentService commentService;
+
+    @Autowired
     protected GoogleMapsAddressProvider googleMapsAddressProvider;
 
-    @RequestMapping(value = "/incidents/all", method = RequestMethod.GET)
-    public List<SimpleIncidentWrapper> getIncidents() {
+    @RequestMapping(value = "/incidents", method = RequestMethod.GET)
+    public List<SimpleIncidentWrapper> getIncidents(@RequestParam(required = false, name = "all") Boolean all) {
         List<SimpleIncidentWrapper> incidentWrappers = new ArrayList<>();
-        for(Incident incident : incidentService.findAll()) {
-           incidentWrappers.add(getSimpleIncidentWrapperFromIncident(incident));
+
+        List<Incident> incidents;
+        if(Boolean.TRUE.equals(all)) {
+            incidents = incidentService.findAll();
+        } else {
+            incidents = incidentService.findAll(IncidentState.NEW, IncidentState.IN_PROGRESS);
         }
 
-        return incidentWrappers;
-    }
-
-    @RequestMapping(value = "/incidents/allForMap", method = RequestMethod.GET)
-    public List<SimpleIncidentWrapper> getIncidentsForMap() {
-        List<SimpleIncidentWrapper> incidentWrappers = new ArrayList<>();
-        for(Incident incident : incidentService.findAll(IncidentState.NEW, IncidentState.IN_PROGRESS)) {
-            incidentWrappers.add(getSimpleIncidentWrapperFromIncident(incident));
+        for(Incident incident : incidents) {
+           incidentWrappers.add(getSimpleIncidentWrapperFromIncident(incident));
         }
 
         return incidentWrappers;
@@ -68,7 +76,7 @@ public class IncidentController extends AbstractController {
         return incidentWrapper;
     }
 
-    @RequestMapping(value = "/incidents/create", method = RequestMethod.POST)
+    @RequestMapping(value = "/incidents", method = RequestMethod.POST)
     public ResponseEntity<String> doCreateIncident(@RequestBody NewIncidentWrapper incidentWrapper) {
         if(incidentWrapper == null) {
             throw new BadRequestException();
@@ -99,10 +107,7 @@ public class IncidentController extends AbstractController {
     @CheckAccess(Role.Type.ADMIN)
     @RequestMapping(value = "/incidents/{incidentId}", method = RequestMethod.PATCH)
     public ResponseEntity<String> updateState(@PathVariable Long incidentId, @RequestBody UpdateStateWrapper updateStateWrapper) {
-        Incident incident = incidentService.find(incidentId);
-        if(incident == null) {
-            throw new ResourceNotFoundException();
-        }
+        findIncidentByIdOrThrowResourceNotFound(incidentId);
 
         if(updateStateWrapper == null || updateStateWrapper.getState() == null) {
             throw new BadRequestException();
@@ -115,6 +120,81 @@ public class IncidentController extends AbstractController {
 
         incidentService.updateState(incidentId, incidentState);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/incidents/{incidentId}/messages", method = RequestMethod.GET)
+    public List<MessageWrapper> getIncidentMessages(@PathVariable Long incidentId) {
+        findIncidentByIdOrThrowResourceNotFound(incidentId);
+
+        List<MessageWrapper> messageWrappers = new ArrayList<>();
+
+        for(Message message : messageService.findByIncidentId(incidentId)) {
+            messageWrappers.add(getMessageWrapperFromMessage(message));
+        }
+
+        return messageWrappers;
+    }
+
+    @CheckAccess(Role.Type.USER)
+    @RequestMapping(value = "/incidents/{incidentId}/messages", method = RequestMethod.POST)
+    public ResponseEntity<String> doCreateIncidentMessage(@PathVariable Long incidentId, @RequestBody NewMessageWrapper messageWrapper, HttpServletRequest httpServletRequest) {
+        Incident incident = findIncidentByIdOrThrowResourceNotFound(incidentId);
+        Person person = getCurrentPersonOrThrowUnauthorized(httpServletRequest);
+
+        Message message = new Message();
+        message.setAuthor(person);
+        message.setIncident(incident);
+        message.setText(messageWrapper.getText());
+
+        try {
+            messageService.persist(message);
+        } catch (ConstraintViolationException e) {
+            throw new BadRequestException();
+        }
+
+        return getResponseCreated("/incidents/" + incidentId + "/messages/" + message.getId());
+    }
+
+    @RequestMapping(value = "/incidents/{incidentId}/comments", method = RequestMethod.GET)
+    public List<MessageWrapper> getIncidentComments(@PathVariable Long incidentId) {
+        findIncidentByIdOrThrowResourceNotFound(incidentId);
+
+        List<MessageWrapper> commentWrappers = new ArrayList<>();
+
+        for(Comment comment : commentService.findByIncidentId(incidentId)) {
+            commentWrappers.add(getCommentWrapperFromComment(comment));
+        }
+
+        return commentWrappers;
+    }
+
+    @CheckAccess(Role.Type.USER)
+    @RequestMapping(value = "/incidents/{incidentId}/comments", method = RequestMethod.POST)
+    public ResponseEntity<String> doCreateIncidentComment(@PathVariable Long incidentId, @RequestBody NewMessageWrapper commentWrapper, HttpServletRequest httpServletRequest) {
+        Incident incident = findIncidentByIdOrThrowResourceNotFound(incidentId);
+        Person person = getCurrentPersonOrThrowUnauthorized(httpServletRequest);
+
+        Comment comment = new Comment();
+        comment.setAuthor(person);
+        comment.setIncident(incident);
+        comment.setText(commentWrapper.getText());
+
+        try {
+            commentService.persist(comment);
+        } catch (ConstraintViolationException e) {
+            throw new BadRequestException();
+        }
+
+        return getResponseCreated("/incidents/" + incidentId + "/comments/" + comment.getId());
+    }
+
+    private Incident findIncidentByIdOrThrowResourceNotFound(Long incidentId) {
+        Incident incident = incidentService.find(incidentId);
+        if(incident == null) {
+            throw new ResourceNotFoundException();
+        }
+
+        return incident;
     }
 
     private SimpleIncidentWrapper getSimpleIncidentWrapperFromIncident(Incident incident) {

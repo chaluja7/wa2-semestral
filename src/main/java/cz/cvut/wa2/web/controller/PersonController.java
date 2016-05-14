@@ -31,7 +31,7 @@ public class PersonController extends AbstractController {
     @Autowired
     protected PersonService personService;
 
-    @RequestMapping(value = "/persons/all", method = RequestMethod.GET)
+    @RequestMapping(value = "/persons", method = RequestMethod.GET)
     public List<PersonWrapper> getPersons() {
         List<PersonWrapper> personWrappers = new ArrayList<>();
         for (Person person : personService.findAllWithRoles()) {
@@ -51,7 +51,7 @@ public class PersonController extends AbstractController {
         return personWrapper;
     }
 
-    @RequestMapping(value = "/persons/create", method = RequestMethod.POST)
+    @RequestMapping(value = "/persons", method = RequestMethod.POST)
     public ResponseEntity<String> doCreatePerson(@RequestBody NewPersonWrapper personWrapper) {
         if(personWrapper == null) {
             throw new BadRequestException();
