@@ -6,7 +6,8 @@ import cz.cvut.wa2.service.PersonService;
 import cz.cvut.wa2.web.controller.exception.BadRequestException;
 import cz.cvut.wa2.web.controller.exception.ResourceNotFoundException;
 import cz.cvut.wa2.web.interceptor.CheckAccess;
-import cz.cvut.wa2.web.wrapper.PersonWrapper;
+import cz.cvut.wa2.web.wrapper.request.NewPersonWrapper;
+import cz.cvut.wa2.web.wrapper.response.PersonWrapper;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ public class PersonController extends AbstractController {
     @RequestMapping(value = "/persons/all", method = RequestMethod.GET)
     public List<PersonWrapper> getPersons() {
         List<PersonWrapper> personWrappers = new ArrayList<>();
-        for (Person person : personService.findAll()) {
+        for (Person person : personService.findAllWithRoles()) {
             personWrappers.add(getPersonWrapperFromPerson(person));
         }
 
@@ -51,12 +52,12 @@ public class PersonController extends AbstractController {
     }
 
     @RequestMapping(value = "/persons/create", method = RequestMethod.POST)
-    public ResponseEntity<String> doCreateOrder(@RequestBody PersonWrapper personWrapper) {
+    public ResponseEntity<String> doCreatePerson(@RequestBody NewPersonWrapper personWrapper) {
         if(personWrapper == null) {
             throw new BadRequestException();
         }
 
-        Person person = getPersonFromPersonWrapper(personWrapper);
+        Person person = getPersonFromNewPersonWrapper(personWrapper);
         try {
             personService.persist(person);
         } catch (ConstraintViolationException e) {
@@ -70,6 +71,7 @@ public class PersonController extends AbstractController {
         if(person == null) return null;
 
         PersonWrapper wrapper = new PersonWrapper();
+        wrapper.setId(person.getId());
         wrapper.setEmail(person.getEmail());
         wrapper.setName(person.getName());
         wrapper.setSurname(person.getSurname());
@@ -83,7 +85,7 @@ public class PersonController extends AbstractController {
         return wrapper;
     }
 
-    private Person getPersonFromPersonWrapper(PersonWrapper wrapper) {
+    private Person getPersonFromNewPersonWrapper(NewPersonWrapper wrapper) {
         if(wrapper == null) return null;
 
         Person person = new Person();

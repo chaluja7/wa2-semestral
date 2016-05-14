@@ -14,8 +14,9 @@ import java.util.Set;
 @Entity
 @Table(name = "persons")
 @NamedQueries({
-        @NamedQuery(name = "Person.findPersonByToken", query = "select p from Person p left outer join fetch p.roles where p.token = :token"),
-        @NamedQuery(name = "Person.findWithRoles", query = "select p from Person p left outer join fetch p.roles where p.id = :id")
+        @NamedQuery(name = "Person.findPersonByToken", query = "select distinct p from Person p left outer join fetch p.roles where p.token = :token"),
+        @NamedQuery(name = "Person.findWithRoles", query = "select distinct p from Person p left outer join fetch p.roles where p.id = :id"),
+        @NamedQuery(name = "Person.findAllWithRoles", query = "select distinct p from Person p left outer join fetch p.roles order by p.id")
 })
 @SuppressWarnings("JpaQlInspection")
 public class Person extends AbstractEntity {
@@ -88,5 +89,9 @@ public class Person extends AbstractEntity {
 
     public boolean hasRole(Role.Type roleNeeded) {
         return getRoles().contains(new Role(roleNeeded));
+    }
+
+    public String getWholeName() {
+        return new StringBuilder().append(getName()).append(" ").append(getSurname()).toString();
     }
 }

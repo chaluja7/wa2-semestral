@@ -61,4 +61,10 @@ public class PersonServiceImpl implements PersonService {
         return hibernatePersonDao.findWithRoles(id);
     }
 
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+    public List<Person> findAllWithRoles() {
+        return hibernatePersonDao.findAllWithRoles();
+    }
+
 }

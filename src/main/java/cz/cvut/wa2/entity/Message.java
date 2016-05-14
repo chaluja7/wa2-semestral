@@ -16,7 +16,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "message")
 @NamedQueries({
-    @NamedQuery(name = "Message.findByIdLazyLoaded", query = "select m from Message m left outer join fetch m.author " +
+    @NamedQuery(name = "Message.findByIdLazyLoaded", query = "select distinct m from Message m left outer join fetch m.author " +
         "left outer join fetch m.incident where m.id = :id")
 })
 @SuppressWarnings("JpaQlInspection")

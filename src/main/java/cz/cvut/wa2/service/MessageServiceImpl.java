@@ -2,6 +2,7 @@ package cz.cvut.wa2.service;
 
 import cz.cvut.wa2.dao.HibernateMessageDao;
 import cz.cvut.wa2.entity.Message;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -26,6 +27,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     @Transactional
     public void persist(Message message) {
+        message.setInsertedTime(new LocalDateTime());
         hibernateMessageDao.persist(message);
     }
 

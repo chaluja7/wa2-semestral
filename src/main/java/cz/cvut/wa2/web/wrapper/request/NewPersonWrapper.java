@@ -1,29 +1,21 @@
-package cz.cvut.wa2.web.wrapper;
+package cz.cvut.wa2.web.wrapper.request;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import cz.cvut.wa2.entity.Role;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
  * @author jakubchalupa
  * @since 17.04.16
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class PersonWrapper implements Serializable {
+public class NewPersonWrapper {
 
-    @JsonProperty("email")
     private String email;
 
-    @JsonProperty("name")
     private String name;
 
-    @JsonProperty("surname")
     private String surname;
 
-    @JsonProperty("roles")
     private List<Role.Type> roles;
 
     public String getEmail() {

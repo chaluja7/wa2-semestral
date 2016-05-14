@@ -23,7 +23,7 @@ import java.util.Set;
     @NamedQuery(name = "Incident.updateState", query = "update Incident set state = :state where id = :id"),
     @NamedQuery(name = "Incident.findAll", query = "select i from Incident i"),
     @NamedQuery(name = "Incident.findAllInStates", query = "select i from Incident i where state in (:states)"),
-    @NamedQuery(name = "Incident.findByIdLazyLoaded", query = "select i from Incident i left outer join fetch i.messages m " +
+    @NamedQuery(name = "Incident.findByIdLazyLoaded", query = "select distinct i from Incident i left outer join fetch i.messages m " +
         "left outer join fetch i.comments c left outer join fetch m.author ma left outer join fetch c.author ca where i.id = :id"),
 })
 @SuppressWarnings("JpaQlInspection")

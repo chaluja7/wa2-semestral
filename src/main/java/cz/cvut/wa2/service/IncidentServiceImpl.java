@@ -3,6 +3,8 @@ package cz.cvut.wa2.service;
 import cz.cvut.wa2.dao.HibernateIncidentDao;
 import cz.cvut.wa2.entity.Incident;
 import cz.cvut.wa2.entity.IncidentState;
+import cz.cvut.wa2.entity.Message;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -29,6 +31,15 @@ public class IncidentServiceImpl implements IncidentService {
     @Override
     @Transactional
     public void persist(Incident incident) {
+        incident.setState(IncidentState.NEW);
+        incident.setInsertedTime(new LocalDateTime());
+
+        if(incident.getMessages().size() > 0) {
+            for(Message message : incident.getMessages()) {
+                message.setInsertedTime(new LocalDateTime());
+            }
+        }
+
         hibernateIncidentDao.persist(incident);
     }
 

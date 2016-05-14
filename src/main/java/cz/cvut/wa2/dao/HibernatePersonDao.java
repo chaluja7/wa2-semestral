@@ -4,6 +4,8 @@ import cz.cvut.wa2.dao.generics.AbstractGenericHibernateDao;
 import cz.cvut.wa2.entity.Person;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @author jakubchalupa
  * @since 19.03.16
@@ -18,6 +20,10 @@ public class HibernatePersonDao extends AbstractGenericHibernateDao<Person> {
 
     public Person findWithRoles(long id) {
         return (Person) sessionFactory.getCurrentSession().getNamedQuery("Person.findWithRoles").setParameter("id", id).uniqueResult();
+    }
+
+    public List<Person> findAllWithRoles() {
+        return sessionFactory.getCurrentSession().getNamedQuery("Person.findAllWithRoles").list();
     }
 
     public Person findPersonByToken(String token) {

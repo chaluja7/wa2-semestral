@@ -2,6 +2,7 @@ package cz.cvut.wa2.service;
 
 import cz.cvut.wa2.dao.HibernateCommentDao;
 import cz.cvut.wa2.entity.Comment;
+import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -26,6 +27,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void persist(Comment comment) {
+        comment.setInsertedTime(new LocalDateTime());
         hibernateCommentDao.persist(comment);
     }
 

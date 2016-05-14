@@ -25,4 +25,6 @@ public interface PersonService {
 
     Person findWithRoles(long id);
 
+    List<Person> findAllWithRoles();
+
 }
