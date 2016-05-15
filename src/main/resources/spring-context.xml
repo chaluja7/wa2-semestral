@@ -42,4 +42,31 @@
         <property name="sessionFactory" ref="sessionFactory" />
     </bean>
 
+    <!-- JMS / AMQ -->
+    <!-- Activemq connection factory -->
+    <bean id="amqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <!-- brokerURL -->
+        <constructor-arg index="0" value="tcp://localhost:61616" />
+    </bean>
+
+    <!-- Pooled Spring connection factory -->
+    <bean id="connectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+        <constructor-arg ref="amqConnectionFactory" />
+    </bean>
+
+    <!-- ======================================================= -->
+    <!-- JMS Send, define default destination and JmsTemplate    -->
+    <!-- ======================================================= -->
+    <!-- Default Destination Queue Definition -->
+    <bean id="wa2AddressDestination" class="org.apache.activemq.command.ActiveMQQueue">
+        <!-- name of the queue -->
+        <constructor-arg index="0" value="wa2-address" />
+    </bean>
+
+    <!-- JmsTemplate Definition -->
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="connectionFactory" />
+        <property name="defaultDestination" ref="wa2AddressDestination" />
+    </bean>
+
 </beans>

@@ -59,3 +59,7 @@ TRUNCATE comment CASCADE;
 INSERT INTO comment(insertedtime, text, person_id, incident_id) VALUES('2014-10-25 21:10:04.777', 'Ta značka je OK, kdoví kdo to nahlašoval', 2, 1);
 INSERT INTO comment(insertedtime, text, person_id, incident_id) VALUES('2014-10-26 15:10:04.777', 'Zavírám to a řeknu že je to vyřešené', 1, 1);
 INSERT INTO comment(insertedtime, text, person_id, incident_id) VALUES('2014-10-25 15:49:04.777', 'Uff tohle máme za trest', 3, 5);
+
+TRUNCATE incident_addresses CASCADE;
+INSERT INTO incident_addresses(address, incident_id) VALUES ('Štěpánská 795/65, 110 00 Praha-Praha 1, Česká republika', 1);
+INSERT INTO incident_addresses(address, incident_id) VALUES ('Nuselská 867/88, 140 00 Praha-Praha 4, Česká republika', 1);

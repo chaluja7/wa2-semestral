@@ -2,10 +2,9 @@ package cz.cvut.wa2.web.controller;
 
 import cz.cvut.wa2.entity.*;
 import cz.cvut.wa2.service.CommentService;
+import cz.cvut.wa2.service.IncidentAddressService;
 import cz.cvut.wa2.service.IncidentService;
 import cz.cvut.wa2.service.MessageService;
-import cz.cvut.wa2.service.PossibleIncidentRegionService;
-import cz.cvut.wa2.service.googleMaps.BadGPSException;
 import cz.cvut.wa2.service.googleMaps.GoogleMapsAddressProvider;
 import cz.cvut.wa2.utils.WA2DateTimeUtils;
 import cz.cvut.wa2.web.controller.exception.BadRequestException;
@@ -15,8 +14,8 @@ import cz.cvut.wa2.web.wrapper.request.NewIncidentWrapper;
 import cz.cvut.wa2.web.wrapper.request.NewMessageWrapper;
 import cz.cvut.wa2.web.wrapper.request.UpdateStateWrapper;
 import cz.cvut.wa2.web.wrapper.response.ComplexIncidentWrapper;
+import cz.cvut.wa2.web.wrapper.response.IncidentAddressWrapper;
 import cz.cvut.wa2.web.wrapper.response.MessageWrapper;
-import cz.cvut.wa2.web.wrapper.response.PossibleRegionWrapper;
 import cz.cvut.wa2.web.wrapper.response.SimpleIncidentWrapper;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +46,7 @@ public class IncidentController extends AbstractController {
     protected CommentService commentService;
 
     @Autowired
-    protected PossibleIncidentRegionService possibleIncidentRegionService;
+    protected IncidentAddressService incidentAddressService;
 
     @Autowired
     protected GoogleMapsAddressProvider googleMapsAddressProvider;
@@ -93,12 +92,13 @@ public class IncidentController extends AbstractController {
         incident.setLatitude(incidentWrapper.getLat());
         incident.setLongitude(incidentWrapper.getLon());
 
-        try {
-            String addressFromGPS = googleMapsAddressProvider.getAddressFromGPS(incidentWrapper.getLat(), incidentWrapper.getLon());
-            incident.setAddress(addressFromGPS);
-        } catch (BadGPSException e) {
-            throw new BadRequestException();
-        }
+        //TODO tohle bude delat worker!
+//        try {
+//            String addressFromGPS = googleMapsAddressProvider.getAddressFromGPS(incidentWrapper.getLat(), incidentWrapper.getLon());
+//            incident.setAddress(addressFromGPS);
+//        } catch (BadGPSException e) {
+//            throw new BadRequestException();
+//        }
 
         try {
             incidentService.persist(incident);
@@ -193,27 +193,27 @@ public class IncidentController extends AbstractController {
         return getResponseCreated("/incidents/" + incidentId + "/comments/" + comment.getId());
     }
 
-    @RequestMapping(value = "/incidents/{incidentId}/region", method = RequestMethod.GET)
-    public PossibleRegionWrapper getIncidentRegion(@PathVariable Long incidentId) {
+    @RequestMapping(value = "/incidents/{incidentId}/addresses", method = RequestMethod.GET)
+    public ResponseEntity<List<IncidentAddressWrapper>> getIncidentRegion(@PathVariable Long incidentId) {
         Incident incident = findIncidentByIdOrThrowResourceNotFound(incidentId);
 
-        PossibleRegionWrapper wrapper = new PossibleRegionWrapper();
-        PossibleIncidentRegion possibleIncidentRegion = possibleIncidentRegionService.findByIncidentId(incidentId);
-        if(possibleIncidentRegion == null) {
-            //TODO musim dat pokyn ke spocitani :)
-            PossibleIncidentRegion newPossibleIncidentRegion = new PossibleIncidentRegion();
-            newPossibleIncidentRegion.setIncident(incident);
-            newPossibleIncidentRegion.setComputing(true);
-            possibleIncidentRegionService.persist(newPossibleIncidentRegion);
+        List<IncidentAddressWrapper> wrappers = new ArrayList<>();
+        final HttpStatus httpStatus;
+        if(incident.getAddress() == null) {
+            //jeste nemam adresu spocitanou workerem, takze vratim hlavicku, ze to jeste neni :)
+            httpStatus = HttpStatus.ACCEPTED;
+        } else {
+            //uz mam adresy spocitane
+            httpStatus = HttpStatus.OK;
 
-            possibleIncidentRegion = possibleIncidentRegionService.findByIncidentId(incidentId);
+            for(IncidentAddress incidentAddress : incidentAddressService.findByIncidentId(incidentId)) {
+                IncidentAddressWrapper incidentAddressWrapper = new IncidentAddressWrapper();
+                incidentAddressWrapper.setAddress(incidentAddress.getAddress());
+                wrappers.add(incidentAddressWrapper);
+            }
         }
 
-        wrapper.setComputing(possibleIncidentRegion.isComputing());
-        wrapper.setUnknownRegion(possibleIncidentRegion.isUnknownRegion());
-        wrapper.setPossibleRegionName(possibleIncidentRegion.getPossibleRegionName());
-
-        return wrapper;
+        return new ResponseEntity<>(wrappers, httpStatus);
     }
 
     private Incident findIncidentByIdOrThrowResourceNotFound(Long incidentId) {
