@@ -31,4 +31,11 @@ public interface MessageService {
      */
     List<Message> findByIncidentId(long incidentId);
 
+    /**
+     * @param id message id
+     * @param incidentId incident id
+     * @return message with given id and incident id or null
+     */
+    Message findByIdAndIncidentId(long id, long incidentId);
+
 }

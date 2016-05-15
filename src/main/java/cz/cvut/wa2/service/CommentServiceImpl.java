@@ -57,4 +57,10 @@ public class CommentServiceImpl implements CommentService {
         return hibernateCommentDao.findByIncidentId(incidentId);
     }
 
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+    public Comment findByIdAndIncidentId(long id, long incidentId) {
+        return hibernateCommentDao.findByIdAndIncidentId(id, incidentId);
+    }
+
 }

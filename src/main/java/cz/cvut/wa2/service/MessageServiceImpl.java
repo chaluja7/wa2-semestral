@@ -57,4 +57,10 @@ public class MessageServiceImpl implements MessageService {
         return hibernateMessageDao.findByIncidentId(incidentId);
     }
 
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+    public Message findByIdAndIncidentId(long id, long incidentId) {
+        return hibernateMessageDao.findByIdAndIncidentId(id, incidentId);
+    }
+
 }

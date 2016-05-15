@@ -34,4 +34,13 @@ public class HibernateMessageDao extends AbstractGenericHibernateDao<Message> {
         return sessionFactory.getCurrentSession().getNamedQuery("Message.findByIncidentId").setParameter("incidentId", incidentId).list();
     }
 
+    /**
+     * @param id message id
+     * @param incidentId incident id
+     * @return message with given id and incident id or null
+     */
+    public Message findByIdAndIncidentId(long id, long incidentId) {
+        return (Message) sessionFactory.getCurrentSession().getNamedQuery("Message.findByIdAndIncidentId").setParameter("id", id).setParameter("incidentId", incidentId).uniqueResult();
+    }
+
 }

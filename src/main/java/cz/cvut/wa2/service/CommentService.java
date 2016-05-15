@@ -31,4 +31,11 @@ public interface CommentService {
      */
     List<Comment> findByIncidentId(long incidentId);
 
+    /**
+     * @param id comment id
+     * @param incidentId incident id
+     * @return comment with given id and incident id or null
+     */
+    Comment findByIdAndIncidentId(long id, long incidentId);
+
 }

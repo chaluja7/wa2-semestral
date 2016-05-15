@@ -19,7 +19,9 @@ import javax.persistence.*;
     @NamedQuery(name = "Comment.findByIdLazyLoaded", query = "select distinct c from Comment c left outer join fetch c.author " +
         "left outer join fetch c.incident where c.id = :id"),
     @NamedQuery(name = "Comment.findByIncidentId", query = "select c from Comment c left outer join fetch c.author " +
-        "where c.incident.id = :incidentId order by c.id")
+        "where c.incident.id = :incidentId order by c.id"),
+    @NamedQuery(name = "Comment.findByIdAndIncidentId", query = "select c from Comment c left outer join fetch c.author " +
+        "where c.id = :id and c.incident.id = :incidentId order by c.id")
 })
 @SuppressWarnings("JpaQlInspection")
 public class Comment extends AbstractEntity {

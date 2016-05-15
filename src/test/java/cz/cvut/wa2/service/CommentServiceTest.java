@@ -40,6 +40,12 @@ public class CommentServiceTest extends AbstractServiceTest {
         Assert.assertNotNull(retrieved.getIncident());
     }
 
+    @Test
+    public void testFindByIdAndIncidentId() {
+        Comment byIdAndIncidentId = commentService.findByIdAndIncidentId(1, 1);
+        Assert.assertNotNull(byIdAndIncidentId);
+    }
+
     public Comment prepareComment() {
         Comment comment = new Comment();
 

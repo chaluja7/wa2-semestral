@@ -40,6 +40,12 @@ public class MessageServiceTest extends AbstractServiceTest {
         Assert.assertNotNull(retrieved.getIncident());
     }
 
+    @Test
+    public void testFindByIdAndIncidentId() {
+        Message byIdAndIncidentId = messageService.findByIdAndIncidentId(1, 1);
+        Assert.assertNotNull(byIdAndIncidentId);
+    }
+
     public Message prepareMessage() {
         Message message = new Message();
 

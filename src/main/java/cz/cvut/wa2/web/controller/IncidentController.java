@@ -134,6 +134,16 @@ public class IncidentController extends AbstractController {
         return messageWrappers;
     }
 
+    @RequestMapping(value = "/incidents/{incidentId}/messages/{messageId}", method = RequestMethod.GET)
+    public MessageWrapper getIncidentMessage(@PathVariable Long incidentId, @PathVariable Long messageId) {
+        Message message = messageService.findByIdAndIncidentId(messageId, incidentId);
+        if(message == null) {
+            throw new ResourceNotFoundException();
+        }
+
+        return getMessageWrapperFromMessage(message);
+    }
+
     @CheckAccess(Role.Type.USER)
     @RequestMapping(value = "/incidents/{incidentId}/messages", method = RequestMethod.POST)
     public ResponseEntity<String> doCreateIncidentMessage(@PathVariable Long incidentId, @RequestBody NewMessageWrapper messageWrapper, HttpServletRequest httpServletRequest) {
@@ -165,6 +175,16 @@ public class IncidentController extends AbstractController {
         }
 
         return commentWrappers;
+    }
+
+    @RequestMapping(value = "/incidents/{incidentId}/comments/{commentId}", method = RequestMethod.GET)
+    public MessageWrapper getIncidentComment(@PathVariable Long incidentId, @PathVariable Long commentId) {
+        Comment comment = commentService.findByIdAndIncidentId(commentId, incidentId);
+        if(comment == null) {
+            throw new ResourceNotFoundException();
+        }
+
+        return getCommentWrapperFromComment(comment);
     }
 
     @CheckAccess(Role.Type.USER)

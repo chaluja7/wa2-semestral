@@ -34,4 +34,13 @@ public class HibernateCommentDao extends AbstractGenericHibernateDao<Comment> {
         return sessionFactory.getCurrentSession().getNamedQuery("Comment.findByIncidentId").setParameter("incidentId", incidentId).list();
     }
 
+    /**
+     * @param id comment id
+     * @param incidentId incident id
+     * @return comment with given id and incident id or null
+     */
+    public Comment findByIdAndIncidentId(long id, long incidentId) {
+        return (Comment) sessionFactory.getCurrentSession().getNamedQuery("Comment.findByIdAndIncidentId").setParameter("id", id).setParameter("incidentId", incidentId).uniqueResult();
+    }
+
 }
