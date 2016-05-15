@@ -5,7 +5,7 @@ import cz.cvut.wa2.service.CommentService;
 import cz.cvut.wa2.service.IncidentAddressService;
 import cz.cvut.wa2.service.IncidentService;
 import cz.cvut.wa2.service.MessageService;
-import cz.cvut.wa2.service.googleMaps.GoogleMapsAddressProvider;
+import cz.cvut.wa2.service.jms.JmsMessageSender;
 import cz.cvut.wa2.utils.WA2DateTimeUtils;
 import cz.cvut.wa2.web.controller.exception.BadRequestException;
 import cz.cvut.wa2.web.controller.exception.ResourceNotFoundException;
@@ -49,7 +49,7 @@ public class IncidentController extends AbstractController {
     protected IncidentAddressService incidentAddressService;
 
     @Autowired
-    protected GoogleMapsAddressProvider googleMapsAddressProvider;
+    protected JmsMessageSender jmsMessageSender;
 
     @RequestMapping(value = "/incidents", method = RequestMethod.GET)
     public List<SimpleIncidentWrapper> getIncidents(@RequestParam(required = false, name = "all") Boolean all) {
@@ -92,16 +92,10 @@ public class IncidentController extends AbstractController {
         incident.setLatitude(incidentWrapper.getLat());
         incident.setLongitude(incidentWrapper.getLon());
 
-        //TODO tohle bude delat worker!
-//        try {
-//            String addressFromGPS = googleMapsAddressProvider.getAddressFromGPS(incidentWrapper.getLat(), incidentWrapper.getLon());
-//            incident.setAddress(addressFromGPS);
-//        } catch (BadGPSException e) {
-//            throw new BadRequestException();
-//        }
-
         try {
             incidentService.persist(incident);
+            //a dam pozadavek na urceni presnych adres z googlu pomoci JMS
+            jmsMessageSender.sendIncidentIdToDownloadAddresses(incident.getId());
         } catch (ConstraintViolationException e) {
             throw new BadRequestException();
         }

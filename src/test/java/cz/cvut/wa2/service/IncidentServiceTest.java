@@ -3,8 +3,6 @@ package cz.cvut.wa2.service;
 import cz.cvut.wa2.entity.Incident;
 import cz.cvut.wa2.entity.IncidentState;
 import cz.cvut.wa2.entity.Message;
-import cz.cvut.wa2.service.googleMaps.BadGPSException;
-import cz.cvut.wa2.service.googleMaps.GoogleMapsAddressProvider;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +21,7 @@ public class IncidentServiceTest extends AbstractServiceTest {
     @Autowired
     protected IncidentService incidentService;
 
-    @Autowired
-    protected GoogleMapsAddressProvider googleMapsAddressProvider;
-
-    private Incident prepareIncident(String text) throws BadGPSException {
+    private Incident prepareIncident(String text) {
         Incident incident = new Incident();
 
         Message message = new Message();
@@ -40,15 +35,11 @@ public class IncidentServiceTest extends AbstractServiceTest {
         incident.setDescription("testDescription");
         incident.setMessages(messages);
 
-        //nastavi adresu
-        String addressFromGPS = googleMapsAddressProvider.getAddressFromGPS(50.081272, 14.426791);
-        incident.setAddress(addressFromGPS);
-
         return incident;
     }
 
     @Test
-    public void testCreateFind() throws BadGPSException {
+    public void testCreateFind() {
         Incident incident = prepareIncident("foo");
         incidentService.persist(incident);
         sessionFactory.getCurrentSession().clear();
@@ -65,7 +56,7 @@ public class IncidentServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void testUpdateState() throws BadGPSException {
+    public void testUpdateState() {
         Incident incident = prepareIncident("foo");
         incidentService.persist(incident);
 
@@ -80,7 +71,7 @@ public class IncidentServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void findAll() throws BadGPSException {
+    public void findAll() {
         Incident incident1 = prepareIncident("foo1");
         Incident incident2 = prepareIncident("foo2");
         Incident incident3 = prepareIncident("foo3");
@@ -100,7 +91,7 @@ public class IncidentServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void testFindIncidentLazyInitialized() throws BadGPSException {
+    public void testFindIncidentLazyInitialized() {
         Incident incident = prepareIncident("foo");
         incidentService.persist(incident);
 

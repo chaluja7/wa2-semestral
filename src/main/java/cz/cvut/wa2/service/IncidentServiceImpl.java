@@ -4,7 +4,6 @@ import cz.cvut.wa2.dao.HibernateIncidentDao;
 import cz.cvut.wa2.entity.Incident;
 import cz.cvut.wa2.entity.IncidentState;
 import cz.cvut.wa2.entity.Message;
-import cz.cvut.wa2.service.jms.JmsMessageSender;
 import org.joda.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,9 +21,6 @@ public class IncidentServiceImpl implements IncidentService {
 
     @Autowired
     protected HibernateIncidentDao hibernateIncidentDao;
-
-    @Autowired
-    protected JmsMessageSender jmsMessageSender;
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
@@ -45,9 +41,6 @@ public class IncidentServiceImpl implements IncidentService {
         }
 
         hibernateIncidentDao.persist(incident);
-
-        //a dam pozadavek na urceni presnych adres z googlu pomoci JMS
-        jmsMessageSender.sendIncidentIdToDownloadAddresses(incident.getId());
     }
 
     @Override

@@ -12,7 +12,7 @@
 
     <tx:annotation-driven transaction-manager="transactionManager" />
 
-    <context:property-placeholder location="classpath:junit.properties" />
+    <context:property-placeholder location="classpath:wa2.properties" />
 
     <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />
@@ -54,9 +54,6 @@
         <constructor-arg ref="amqConnectionFactory" />
     </bean>
 
-    <!-- ======================================================= -->
-    <!-- JMS Send, define default destination and JmsTemplate    -->
-    <!-- ======================================================= -->
     <!-- Default Destination Queue Definition -->
     <bean id="wa2AddressDestination" class="org.apache.activemq.command.ActiveMQQueue">
         <!-- name of the queue -->
